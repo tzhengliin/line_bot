@@ -1,7 +1,10 @@
 from flask import Flask, request, render_template, redirect, url_for
 import requests
+from flask import Flask, send_from_directory
 
 app = Flask(__name__)
+
+
 
 # LINE Notify Token 對應不同帳號
 LINE_TOKENS = {
@@ -43,6 +46,10 @@ def send_to_line(account, message):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/images/<path:filename>')
+def images(filename):
+    return send_from_directory('static/image', filename)
 
 @app.route('/<page>')
 def render_page(page):

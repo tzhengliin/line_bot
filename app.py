@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for
 import requests
 from flask import Flask, send_from_directory
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 
 
 

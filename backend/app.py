@@ -1,6 +1,6 @@
+import os
 from flask import Flask, request, render_template, redirect, url_for, send_from_directory, jsonify
 import requests
-import os
 
 app = Flask(__name__, static_folder='../frontend/dist')
 
@@ -54,18 +54,12 @@ def send_message():
     message_key = request.form.get('message')
 
     if account and message_key:
-        # 檢查 MESSAGE_MAP 中是否有對應的代號
-        message = MESSAGE_MAP.get(message_key)
-
-        # 如果找不到代號，就認為是自訂訊息
-        if not message:
-            message = message_key
-
-        # 發送消息
+        message = LINE_TOKENS.get(message_key, message_key)
         success = send_to_line(account, message)
         if success:
             return jsonify({'status': 'success'})
     return jsonify({'status': 'error', 'message': 'Error in sending message'}), 400
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)

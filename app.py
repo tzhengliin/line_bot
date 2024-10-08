@@ -44,6 +44,13 @@ def send_to_line(account, message):
 def index():
     return render_template('index.html')
 
+@app.route('/<page>')
+def render_page(page):
+    try:
+        return render_template(f'{page}.html')
+    except Exception as e:
+        return "Page not found", 404
+
 
 @app.route('/send_message', methods=['POST'])
 def send_message():

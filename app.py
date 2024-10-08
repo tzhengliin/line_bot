@@ -49,7 +49,7 @@ def index():
 
 @app.route('/images/<path:filename>')
 def images(filename):
-    return send_from_directory('static/image', filename)
+    return send_from_directory('static/images', filename)
 
 @app.route('/<page>')
 def render_page(page):

@@ -1,10 +1,8 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, send_from_directory, jsonify
 import requests
-from flask import Flask, send_from_directory
+import os
 
-app = Flask(__name__, static_folder='static')
-
-
+app = Flask(__name__, static_folder='../frontend/dist')
 
 # LINE Notify Token 對應不同帳號
 LINE_TOKENS = {
@@ -44,22 +42,13 @@ def send_to_line(account, message):
     return response.status_code == 200
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+@app.route('/<path:path>')
+def index(path=''):
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    return send_from_directory(app.static_folder, 'index.html')
 
-@app.route('/images/<path:filename>')
-def images(filename):
-    return send_from_directory('static/images', filename)
-
-@app.route('/<page>')
-def render_page(page):
-    try:
-        return render_template(f'{page}.html')
-    except Exception as e:
-        return "Page not found", 404
-
-
-@app.route('/send_message', methods=['POST'])
+@app.route('/api/send_message', methods=['POST'])
 def send_message():
     account = request.form.get('account')
     message_key = request.form.get('message')
@@ -75,8 +64,8 @@ def send_message():
         # 發送消息
         success = send_to_line(account, message)
         if success:
-            return redirect(url_for('index'))
-    return "Error in sending message", 400
+            return jsonify({'status': 'success'})
+    return jsonify({'status': 'error', 'message': 'Error in sending message'}), 400
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

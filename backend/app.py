@@ -2,7 +2,8 @@ import os
 from flask import Flask, request, render_template, redirect, url_for, send_from_directory, jsonify
 import requests
 
-app = Flask(__name__, static_folder='../frontend/dist')
+# 設置 Flask 應用，並指定靜態文件夾的絕對路徑
+app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), '../frontend/dist'))
 
 # LINE Notify Token 對應不同帳號
 LINE_TOKENS = {
@@ -44,21 +45,31 @@ def send_to_line(account, message):
 @app.route('/')
 @app.route('/<path:path>')
 def index(path=''):
-    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
-        return send_from_directory(app.static_folder, path)
-    return send_from_directory(app.static_folder, 'index.html')
+    """處理靜態文件和 SPA 路徑"""
+    try:
+        if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+            return send_from_directory(app.static_folder, path)
+        return send_from_directory(app.static_folder, 'index.html')
+    except FileNotFoundError:
+        return "File not found", 404
 
 @app.route('/api/send_message', methods=['POST'])
 def send_message():
+    """API 用於發送消息到 LINE Notify"""
     account = request.form.get('account')
     message_key = request.form.get('message')
 
-    if account and message_key:
-        message = LINE_TOKENS.get(message_key, message_key)
-        success = send_to_line(account, message)
-        if success:
-            return jsonify({'status': 'success'})
-    return jsonify({'status': 'error', 'message': 'Error in sending message'}), 400
+    if not account or not message_key:
+        return jsonify({'status': 'error', 'message': 'Missing account or message parameter'}), 400
+
+    # 使用 MESSAGE_MAP 獲取對應的訊息
+    message = MESSAGE_MAP.get(message_key, message_key)
+    success = send_to_line(account, message)
+    
+    if success:
+        return jsonify({'status': 'success'})
+    else:
+        return jsonify({'status': 'error', 'message': 'Failed to send message'}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

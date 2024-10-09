@@ -154,8 +154,9 @@
             const account = document.getElementById("accountSelect").value;
             const message = button.getAttribute("data-message");
 
-            // 發送 POST 請求到後端
-            fetch("/send_message", {
+            // 發送 POST 請求到後端的 API
+            fetch("/api/send_message", {
+              // 更改這裡的 URL
               method: "POST",
               headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -184,8 +185,9 @@
           const account = document.getElementById("accountSelect").value;
           const message = document.getElementById("customMessage").value;
 
-          // 發送 POST 請求到後端
-          fetch("/send_message", {
+          // 發送 POST 請求到後端的 API
+          fetch("/api/send_message", {
+            // 更改這裡的 URL
             method: "POST",
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",

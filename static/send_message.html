@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <title>LINE Notify Message Sender</title>
+    <style>
+      .square-btn {
+        width: 100%;
+        padding-top: 100%; /* Makes the div a square */
+        position: relative;
+        text-align: center;
+        cursor: pointer;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+      .square-btn-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar with Hamburger Menu -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+          <img src="/assets/logo-DybHToZW.png" alt="Logo" height="40" />
+          <span class="ms-2 fs-4">健康管理系統</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">首頁</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="send_message.html">傳送訊息</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="members.html">學員名單</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="settings.html">設定菜單</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Account Select -->
+    <div class="container mt-3">
+      <div class="mb-3">
+        <label for="accountSelect" class="form-label">選擇帳號</label>
+        <select class="form-select" id="accountSelect" name="account" required>
+          <option value="測試">測試</option>
+          <option value="王悅">王悅</option>
+          <option value="佳玫">佳玫</option>
+          <!-- 添加更多選項 -->
+        </select>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="container mt-3">
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="quick-buttons-tab" data-bs-toggle="tab" data-bs-target="#quick-buttons" type="button" role="tab" aria-controls="quick-buttons" aria-selected="true">
+            快捷按鈕
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="custom-message-tab" data-bs-toggle="tab" data-bs-target="#custom-message" type="button" role="tab" aria-controls="custom-message" aria-selected="false">
+            自訂訊息
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <!-- Quick Buttons Tab -->
+        <div class="tab-pane fade show active" id="quick-buttons" role="tabpanel" aria-labelledby="quick-buttons-tab">
+          <div class="row mt-3">
+            <div class="col-6 col-md-4">
+              <div class="square-btn" data-message="later">
+                <div class="square-btn-text">等等要吃餐囉!</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4">
+              <div class="square-btn" data-message="timeon">
+                <div class="square-btn-text">時間到了!</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4">
+              <div class="square-btn" data-message="photo1">
+                <div class="square-btn-text">美食照片 1</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4">
+              <div class="square-btn" data-message="photo2">
+                <div class="square-btn-text">照片有拍了嗎?</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4">
+              <div class="square-btn" data-message="goodeat">
+                <div class="square-btn-text">看起來好好吃!</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4">
+              <div class="square-btn" data-message="crazy">
+                <div class="square-btn-text">照片快來!</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4">
+              <div class="square-btn" data-message="happy">
+                <div class="square-btn-text">歐耶 有照片了!</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4">
+              <div class="square-btn" data-message="excellent">
+                <div class="square-btn-text">你怎麼這麼優秀!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom Message Tab -->
+        <div class="tab-pane fade" id="custom-message" role="tabpanel" aria-labelledby="custom-message-tab">
+          <form id="customMessageForm" class="mt-3">
+            <div class="mb-3">
+              <label for="customMessage" class="form-label">輸入訊息</label>
+              <textarea class="form-control" id="customMessage" name="message" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">送出</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // 快捷按鈕
+        const buttons = document.querySelectorAll(".square-btn");
+
+        buttons.forEach((button) => {
+          button.addEventListener("click", function () {
+            const account = document.getElementById("accountSelect").value;
+            const message = button.getAttribute("data-message");
+
+            // 發送 POST 請求到後端的 API
+            fetch("/api/send_message", {
+              // 更改這裡的 URL
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+              body: `account=${account}&message=${message}`,
+            })
+              .then((response) => {
+                if (response.ok) {
+                  console.log("Message sent successfully!");
+                } else {
+                  console.log("Error in sending message.");
+                }
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+                console.log("Error in sending message.");
+              });
+          });
+        });
+
+        // 自訂訊息表單
+        const customMessageForm = document.getElementById("customMessageForm");
+
+        customMessageForm.addEventListener("submit", function (event) {
+          event.preventDefault();
+          const account = document.getElementById("accountSelect").value;
+          const message = document.getElementById("customMessage").value;
+
+          // 發送 POST 請求到後端的 API
+          fetch("/api/send_message", {
+            // 更改這裡的 URL
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `account=${account}&message=${message}`,
+          })
+            .then((response) => {
+              if (response.ok) {
+                console.log("Message sent successfully!");
+                customMessageForm.reset();
+              } else {
+                console.log("Error in sending message.");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              console.log("Error in sending message.");
+            });
+        });
+      });
+    </script>
+  </body>
+</html>

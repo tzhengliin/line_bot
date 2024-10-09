@@ -1,9 +1,9 @@
 import os
-from flask import Flask, request, render_template, redirect, url_for, send_from_directory, jsonify
+from flask import Flask, request, send_from_directory, jsonify, send_file
 import requests
 
 # 設置 Flask 應用，並指定靜態文件夾的絕對路徑
-app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), '../frontend/dist'))
+app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 
 # LINE Notify Token 對應不同帳號
 LINE_TOKENS = {
@@ -14,7 +14,7 @@ LINE_TOKENS = {
 
 # 代號與完整訊息對應表
 MESSAGE_MAP = {
-    'later': '等等要吃餐囉!  要吃餐囉!',
+    'later': '等等要吃餐囉! 要吃餐囉!',
     'timeon': '時間到了! 時間到了! 吃餐囉~ 小安好興奮阿',
     'photo1': '照片~照片~我要美食的照片',
     'photo2': '敲碗~照片有拍了嗎?',
@@ -42,17 +42,17 @@ def send_to_line(account, message):
     )
     return response.status_code == 200
 
+# 靜態文件路由處理
 @app.route('/')
 @app.route('/<path:path>')
 def index(path=''):
     """處理靜態文件和 SPA 路徑"""
-    try:
-        if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
-            return send_from_directory(app.static_folder, path)
-        return send_from_directory(app.static_folder, 'index.html')
-    except FileNotFoundError:
-        return "File not found", 404
+    if path and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_file(os.path.join(app.static_folder, 'index.html'))
 
+# API: 發送消息到 LINE Notify
 @app.route('/api/send_message', methods=['POST'])
 def send_message():
     """API 用於發送消息到 LINE Notify"""
@@ -71,6 +71,12 @@ def send_message():
     else:
         return jsonify({'status': 'error', 'message': 'Failed to send message'}), 500
 
+# 404 錯誤處理
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify({"error": "Page not found"}), 404
+
+# 啟動 Flask 應用
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)

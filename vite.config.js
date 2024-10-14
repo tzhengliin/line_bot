@@ -3,7 +3,6 @@ import { ViteEjsPlugin } from 'vite-plugin-ejs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { glob } from 'glob';
-
 import liveReload from 'vite-plugin-live-reload';
 
 function moveOutputPlugin() {
@@ -34,14 +33,19 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      input: Object.fromEntries(
-        glob
-          .sync('pages/**/*.html')
-          .map((file) => [
-            path.relative('pages', file.slice(0, file.length - path.extname(file).length)),
-            fileURLToPath(new URL(file, import.meta.url)),
-          ])
-      ),
+      input: {
+        // 將所有 HTML 頁面作為入口
+        ...Object.fromEntries(
+          glob
+            .sync('pages/**/*.html')
+            .map((file) => [
+              path.relative('pages', file.slice(0, file.length - path.extname(file).length)),
+              fileURLToPath(new URL(file, import.meta.url)),
+            ])
+        ),
+        // 將 main.js 作為入口
+        main: fileURLToPath(new URL('src/main.js', import.meta.url)),
+      },
     },
     outDir: 'static',
   },

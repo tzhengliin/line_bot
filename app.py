@@ -1,9 +1,19 @@
 import os
 from flask import Flask, request, send_from_directory, jsonify, send_file
 import requests
+from pymongo import MongoClient
 
 # 設置 Flask 應用，並指定靜態文件夾的絕對路徑
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
+
+PORT_FORWARDED_HOSTNAME = "hnd1.clusters.zeabur.com"
+DATABASE_PORT_FORWARDED_PORT = "32030"
+
+# MongoDB 連接設定
+MONGO_URI = f"mongodb://mongo:78HR235kN9qUg6SLC1Aps0haV4YMQGez@{PORT_FORWARDED_HOSTNAME}:{DATABASE_PORT_FORWARDED_PORT}"
+client = MongoClient(MONGO_URI)
+db = client['coaches_database']
+collection = db['students_collection']
 
 # LINE Notify Token 對應不同帳號
 LINE_TOKENS = {
@@ -70,6 +80,13 @@ def send_message():
         return jsonify({'status': 'success'})
     else:
         return jsonify({'status': 'error', 'message': 'Failed to send message'}), 500
+
+# API: 獲取所有學員資料
+@app.route('/api/students', methods=['GET'])
+def get_students():
+    """API 用於獲取所有學員資料"""
+    students = list(collection.find({}, {'_id': 0}))  # 排除 _id 欄位
+    return jsonify(students)
 
 # 404 錯誤處理
 @app.errorhandler(404)

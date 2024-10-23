@@ -19,7 +19,9 @@ collection = db['students_collection']
 LINE_TOKENS = {
     '測試': '8AAY6yR18LUFC5wnsBVOsjSRBHjaawFE5nwilD4cFkn',  
     '王悅': 'APgIjzItUSEk9aelLIQzSxr6ZQKSsGe6xt7cWpEO1US',  
-    '佳玫': 'eKhtGiQtthGBZPUys6S4qo5j4RxLa43HUVwUk7zcnsI'  
+    '佳玫': 'eKhtGiQtthGBZPUys6S4qo5j4RxLa43HUVwUk7zcnsI',  
+    '孟惟': 'pSp5qkSCvDZlzJFpQOWUlFnImmg4V51x08mUR5X5yzN',  
+    '勝智': 'k61i31E1jJMekRAf83OF7CDHuhzLaDaUbiPqDYwj2UH'   
 }
 
 # 代號與完整訊息對應表
